@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>uk.gov.food</groupId>
-	<artifactId>reference-numbers</artifactId>
+	<artifactId>fsa-reference-numbers</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -23,6 +23,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<kotlin.version>1.2.20</kotlin.version>
+        <docker.image.prefix>293385631482.dkr.ecr.eu-west-1.amazonaws.com/epimorphics</docker.image.prefix>
 	</properties>
 
 	<dependencies>
@@ -53,6 +54,11 @@
             <artifactId>jopt-simple</artifactId>
             <version>5.0.3</version>
         </dependency>
+        <dependency>
+            <groupId>uk.gov.food</groupId>
+            <artifactId>rn</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 	<build>
@@ -82,6 +88,17 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+            <plugin>
+              <groupId>com.spotify</groupId>
+              <artifactId>dockerfile-maven-plugin</artifactId>
+              <version>1.3.6</version>
+              <configuration>
+                  <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                  <buildArgs>
+                      <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                  </buildArgs>
+              </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

@@ -8,11 +8,9 @@ import uk.gov.food.rn.*
 import java.time.ZonedDateTime
 
 @RestController
-class GreetingController {
-    @GetMapping("/fsa-rn/{authority}/{instance}/{type}")
-    fun get(@PathVariable authority: Int, @PathVariable instance: Int, @PathVariable type: Int) : (ResponseEntity<String>) {
-        //var x = RN(Authority(1000), Instance(1), Type(99), ZonedDateTime.now())
-        var config = ReferenceNumbersConfig()
+class GreetingController(val config: ReferenceNumbersConfig) {
+    @GetMapping("/fsa-rn/{authority}/{type}")
+    fun get(@PathVariable authority: Int, @PathVariable type: Int) : (ResponseEntity<String>) {
         var x = RNFactory.getFactory(Authority(authority), Instance(config.instance), Type(type))
         return ResponseEntity.ok(x.generateReferenceNumber().toString())
     }
