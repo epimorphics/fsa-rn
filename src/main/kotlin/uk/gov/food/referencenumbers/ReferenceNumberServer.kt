@@ -15,3 +15,15 @@ class GreetingController(val config: ReferenceNumbersConfig) {
         return ResponseEntity.ok(x.generateReferenceNumber().toString())
     }
 }
+
+class DecodedRN(val instance: Instance, val timestamp: TimeStamp, val type: Type, val authority: Authority)
+
+@RestController
+class DecodeController(val config: ReferenceNumbersConfig) {
+    @GetMapping("/fsa-rn-decode/{rn}")
+    fun get(@PathVariable rn: String) : (ResponseEntity<DecodedRN>) {
+        var x = RN(rn)
+        var drn = DecodedRN(x.getInstance(), x.getInstant(), x.getType(), x.getAuthority())
+        return ResponseEntity.ok(drn)
+    }
+}
