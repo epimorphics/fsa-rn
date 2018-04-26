@@ -5,7 +5,7 @@
 
 	<groupId>uk.gov.food</groupId>
 	<artifactId>fsa-reference-numbers</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.4</version>
 	<packaging>jar</packaging>
 
 	<name>reference-numbers</name>
@@ -24,6 +24,7 @@
 		<java.version>1.8</java.version>
 		<kotlin.version>1.2.20</kotlin.version>
         <docker.image.prefix>293385631482.dkr.ecr.eu-west-1.amazonaws.com/epimorphics</docker.image.prefix>
+        <jackson-annotations-version>2.9.5</jackson-annotations-version>
 	</properties>
 
 	<dependencies>
@@ -34,6 +35,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson-annotations-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
