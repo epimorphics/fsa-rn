@@ -12,8 +12,3 @@ class ReferenceNumbersApplication
 fun main(args: Array<String>) {
     runApplication<ReferenceNumbersApplication>(*args)
 }
-/*
-fun main(args: Array<String>) {
-    var x = RN(Authority(1000), Instance(1), Type(99), ZonedDateTime.now())
-    print(x.toString())
-}*/

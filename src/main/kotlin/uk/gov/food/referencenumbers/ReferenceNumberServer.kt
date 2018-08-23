@@ -14,7 +14,7 @@ class FSARN(@JsonProperty("fsa-rn") val rn: String)
 
 @RestController
 class GreetingController(val config: ReferenceNumbersConfig) {
-    @GetMapping("/fsa-rn/{authority}/{type}")
+    @GetMapping("/generate/{authority}/{type}")
     fun get(@PathVariable authority: Int, @PathVariable type: Int) : (ResponseEntity<FSARN>) {
         var x = RNFactory.getFactory(Authority(authority), Instance(config.instance), Type(type))
         var rn = FSARN(x.generateReferenceNumber().toString())
@@ -30,7 +30,7 @@ class DecodedRN(val instance: Instance, val timestamp: TimeStamp, val type: Type
 
 @RestController
 class DecodeController(val config: ReferenceNumbersConfig) {
-    @GetMapping("/fsa-rn-decode/{rn}")
+    @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.html"), produces=arrayOf("text/html"))
     fun get(@PathVariable rn: String) : (ResponseEntity<DecodedRN>) {
         var x = RN(rn)
         var drn = DecodedRN(x.getInstance(), x.getInstant(), x.getType(), x.getAuthority())
