@@ -30,14 +30,14 @@ class GreetingController(val config: ReferenceNumbersConfig) {
 }
 
 @JsonSerialize(using = DecodedRNSerializer::class)
-data class DecodedRN(val referenceNumber: RN, val instance: Instance, val timestamp: TimeStamp, val type: TypeDisplay, val authority: Authority)
+data class DecodedRN(val referenceNumber: RN, val instance: Instance, val timestamp: TimeStamp, val type: TypeDisplay, val authority: AuthorityDisplay, val version: Version)
 
 @RestController
 class DecodeController(val config: ReferenceNumbersConfig) {
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.html"), produces=arrayOf("text/html"))
     fun get(@PathVariable rn: String) : (ResponseEntity<DecodedRN>) {
         var x = RN(rn)
-        var drn = DecodedRN(x.getInstance(), x.getInstant(), TypeDisplay(x.getType()), x.getAuthority())
+        var drn = LDRN(x, x.getInstance(), x.getInstant(), TypeDisplay(x.getType()), AuthorityDisplay(x.getAuthority()), x.getVersion())
         return ResponseEntity.ok(drn)
     }
 }
