@@ -7,6 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.food.rn.*
 import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer
+import com.mitchellbosecke.pebble.PebbleEngine
+import com.mitchellbosecke.pebble.loader.ClasspathLoader
+import com.mitchellbosecke.pebble.template.PebbleTemplate
+import java.io.StringWriter
+import java.time.Instant
 import java.time.ZonedDateTime
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -37,6 +44,38 @@ data class LDRN(val referenceNumber: RN, val instance: Instance, val timestamp: 
 
 @RestController
 class DecodeController(val config: ReferenceNumbersConfig) {
+    @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.html"), produces=arrayOf("text/html"))
+    fun getHTML(@PathVariable rn: String) : (ResponseEntity<Any?>) {
+        var x = RN(rn)
+        var typeDisplay: TypeDisplay?
+        var authorityDisplay: AuthorityDisplay?
+
+        typeDisplay = TypeDisplay(x.getType())
+        authorityDisplay = AuthorityDisplay(x.getAuthority())
+        var drn = DecodedRN(x, x.getInstance(), x.getInstant(), typeDisplay, authorityDisplay, x.getVersion())
+        var loader = ClasspathLoader()
+        loader.prefix = "templates"
+        loader.suffix = ".peb"
+        var engine : PebbleEngine = PebbleEngine.Builder()
+                .loader(loader)
+                .build()
+        var compiledTemplate : PebbleTemplate = engine.getTemplate("base")
+        var context = HashMap<String, Any>()
+        context.put("title", "FSA-RN")
+        context.put("timestamp", drn.timestamp.instant)
+        context.put("referenceNumber", drn.referenceNumber.encodedForm)
+        context.put("timestamp", drn.timestamp.instant)
+        context.put("instance", String.format("%03d", drn.instance.id))
+        context.put("version", drn.version.id)
+        context.put("typeLabels", drn.type.labels)
+        context.put("typeID", String.format("%03d", drn.type.id))
+        context.put("authorityLabels", drn.authority.labels)
+        context.put("authorityID", String.format("%04d", drn.authority.id))
+        var writer = StringWriter()
+        compiledTemplate.evaluate(writer, context)
+        return ResponseEntity.status(HttpStatus.OK).body(writer.toString())
+    }
+
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.json"), produces=arrayOf("application/json"))
     fun getJSON(@PathVariable rn: String) : (ResponseEntity<Any?>) {
         var x = RN(rn)
