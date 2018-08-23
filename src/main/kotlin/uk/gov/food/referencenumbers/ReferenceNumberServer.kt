@@ -32,10 +32,32 @@ class GreetingController(val config: ReferenceNumbersConfig) {
 @JsonSerialize(using = DecodedRNSerializer::class)
 data class DecodedRN(val referenceNumber: RN, val instance: Instance, val timestamp: TimeStamp, val type: TypeDisplay, val authority: AuthorityDisplay, val version: Version)
 
+@JsonSerialize(using = LDRNSerializer::class)
+data class LDRN(val referenceNumber: RN, val instance: Instance, val timestamp: TimeStamp, val type: TypeDisplay, val authority: AuthorityDisplay, val version: Version)
+
 @RestController
 class DecodeController(val config: ReferenceNumbersConfig) {
-    @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.html"), produces=arrayOf("text/html"))
-    fun get(@PathVariable rn: String) : (ResponseEntity<DecodedRN>) {
+    @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.json"), produces=arrayOf("application/json"))
+    fun getJSON(@PathVariable rn: String) : (ResponseEntity<Any?>) {
+        var x = RN(rn)
+        var typeDisplay: TypeDisplay?
+        var authorityDisplay: AuthorityDisplay?
+        try {
+            typeDisplay = TypeDisplay(x.getType())
+        } catch (e : RNException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
+        }
+        try {
+            authorityDisplay = AuthorityDisplay(x.getAuthority())
+        } catch (e : RNException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
+        }
+        var drn = DecodedRN(x, x.getInstance(), x.getInstant(), typeDisplay, authorityDisplay, x.getVersion())
+        return ResponseEntity.status(HttpStatus.OK).body(drn)
+    }
+
+    @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.jsonld"), produces=arrayOf("application/ld+json"))
+    fun getJSONLD(@PathVariable rn: String) : (ResponseEntity<LDRN>) {
         var x = RN(rn)
         var drn = LDRN(x, x.getInstance(), x.getInstant(), TypeDisplay(x.getType()), AuthorityDisplay(x.getAuthority()), x.getVersion())
         return ResponseEntity.ok(drn)
