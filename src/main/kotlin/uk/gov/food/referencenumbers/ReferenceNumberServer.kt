@@ -15,7 +15,10 @@ class FSARN(@JsonProperty("fsa-rn") val rn: String)
 @RestController
 class GreetingController(val config: ReferenceNumbersConfig) {
     @GetMapping("/generate/{authority}/{type}")
-    fun get(@PathVariable authority: Int, @PathVariable type: Int) : (ResponseEntity<FSARN>) {
+    fun get(@PathVariable authority: Int, @PathVariable type: String) : (ResponseEntity<FSARN>) {
+        if (type.length != 3) {
+            throw RNException("Type parameter invalid length, example: 005")
+        }
         var x = RNFactory.getFactory(Authority(authority), Instance(config.instance), Type(type))
         var rn = FSARN(x.generateReferenceNumber().toString())
         var responseHeaders = HttpHeaders()
