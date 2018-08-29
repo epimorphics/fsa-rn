@@ -14,13 +14,15 @@ import org.json.JSONException
 @JsonSerialize(using = TypeDisplaySerializer::class)
 class TypeDisplay(t : Type) : Type(t.id) {
 
-    lateinit var labels: List<Label>
-
+    var labels: List<Label>
+    lateinit var status: String
     init {
         try {
             this.labels = RegistryCache.getTypeLabels(id)
+            this.status = "Valid"
         } catch (e : JSONException) {
-            throw RNException("Type in reference number is not valid")
+            this.labels = ArrayList<Label>()
+            this.status = "Invalid Type"
         }
     }
 
@@ -36,6 +38,7 @@ class TypeDisplaySerializer: StdSerializer<TypeDisplay> {
         jgen.writeStartObject();
 
         jgen.writeStringField( "id", String.format("%03d",type.id))
+        jgen.writeStringField( "status", type.status)
         jgen.writeArrayFieldStart("labels")
         for (i in 0..type.labels.size-1) {
             jgen.writeStartObject()

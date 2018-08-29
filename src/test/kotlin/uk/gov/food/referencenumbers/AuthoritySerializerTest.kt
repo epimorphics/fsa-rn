@@ -18,7 +18,7 @@ class AuthoritySerializerTest {
         var serializerProvider = ObjectMapper().serializerProvider
         AuthorityDisplaySerializer().serialize(testDisplay, jsonGenerator, serializerProvider)
         jsonGenerator.flush()
-        assertThat(jsonWriter.toString(), equalTo("{\"id\":\"1000\",\"labels\":[{\"lang\":\"en\",\"name\":\"Food Standards Agency\"},{\"lang\":\"cy\",\"name\":\"Asiantaeth Safonau Bwyd\"}]}"))
+        assertThat(jsonWriter.toString(), equalTo("{\"id\":\"1000\",\"status\":\"Valid\",\"labels\":[{\"lang\":\"en\",\"name\":\"Food Standards Agency\"},{\"lang\":\"cy\",\"name\":\"Asiantaeth Safonau Bwyd\"}]}"))
     }
 
 }

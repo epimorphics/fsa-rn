@@ -60,7 +60,7 @@
             <td scope="row">{{ version }}</th>
           </tr>
           <tr>
-            <th scope="row">Created by</th>
+            <th scope="row">Generator Instance</th>
             <td scope="row">{{ instance }}</th>
           </tr>
           <tr>
@@ -68,16 +68,20 @@
             <td scope="row">
               <table>
                 <tbody>
+                  <tr>
+                    <th scope="row">ID</th>
+                    <td scope="row">{{ typeID }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Status</th>
+                    <td scope="row">{{ typeStatus}}</td>
+                  </tr>
                   {% for label in typeLabels%}
                   <tr>
                     <th scope="row">Label:{{ label.lang }}</th>
                     <td scope="row">{{ label.name }}</th>
                   </tr>
                   {% endfor%}
-                  <tr>
-                    <th scope="row">ID</th>
-                    <td scope="row">{{ typeID }}</td>
-                  </tr>
                 </tbody>
               </table> 
           </tr>
@@ -86,16 +90,20 @@
             <td scope="row">
               <table>
                 <tbody>
+                  <tr>
+                    <th scope="row">ID</th>
+                    <td scope="row">{{ authorityID }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Status</th>
+                    <td scope="row">{{ authorityStatus}}</td>
+                  </tr>
                   {% for label in authorityLabels%}
                   <tr>
                     <th scope="row">Label:{{ label.lang }}</th>
                     <td scope="row">{{ label.name }}</th>
                   </tr>
                   {% endfor%}
-                  <tr>
-                    <th scope="row">ID</th>
-                    <td scope="row">{{ authorityID }}</td>
-                  </tr>
                 </tbody>
               </table> 
           </tr>

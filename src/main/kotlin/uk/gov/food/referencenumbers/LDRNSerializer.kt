@@ -13,7 +13,7 @@ class LDRNSerializer: StdSerializer<LDRN> {
     constructor(a : Class<LDRN>?) : super(a)
     override fun serialize(rn: LDRN, jgen: JsonGenerator, provider: SerializerProvider) {
         jgen.writeStartObject()
-        jgen.writeStringField("rdf:type", "rn:RN")
+        jgen.writeStringField("@type", "rn:RN")
         jgen.writeStringField("@id", "https://data.food.gov.uk/reference-number/decode/${rn.referenceNumber.encodedForm}")
         jgen.writeStringField("rn:timestamp", rn.timestamp.instant.toString())
         jgen.writeStringField("rn:instance", String.format("%03d", rn.instance.id))
@@ -21,6 +21,7 @@ class LDRNSerializer: StdSerializer<LDRN> {
         jgen.writeObjectFieldStart("rn:type")
             jgen.writeStringField("@id", "http://data.food.gov.uk/codes/reference-number/type/${rn.type}")
             jgen.writeStringField("rdfs:label", "food-rrn")
+            jgen.writeStringField("rn:status", rn.type.status)
             jgen.writeStringField("skos:notation", rn.type.toString())
             jgen.writeArrayFieldStart("skos:prefLabel")
                 for (i in 0..rn.type.labels.size-1) {
@@ -34,6 +35,7 @@ class LDRNSerializer: StdSerializer<LDRN> {
         jgen.writeObjectFieldStart("rn:authority")
             jgen.writeStringField("@id", "http://data.food.gov.uk/codes/reference-number/authority/${rn.authority}")
             jgen.writeStringField("@type", "skos:Concept")
+            jgen.writeStringField("rn:status", rn.authority.status)
             jgen.writeArrayFieldStart("skos:prefLabel")
                 for (i in 0..rn.authority.labels.size-1) {
                     jgen.writeStartObject()

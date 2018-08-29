@@ -23,11 +23,14 @@ import java.util.concurrent.TimeUnit
 class AuthorityDisplay(t : Authority) : Authority(t.id) {
 
     var labels: List<Label>
+    lateinit var status: String
     init {
         try {
             this.labels = RegistryCache.getAuthorityLabels(id)
-        }  catch (e : JSONException) {
-            throw RNException("Authority in reference number is not valid:" + e.message)
+            this.status = "Valid"
+        }  catch (e : Exception) {
+            this.labels = ArrayList<Label>()
+            this.status = "Invalid Authority"
         }
     }
 
@@ -43,6 +46,7 @@ class AuthorityDisplaySerializer: StdSerializer<AuthorityDisplay> {
         jgen.writeStartObject();
 
         jgen.writeStringField( "id", String.format("%04d",authority.id))
+        jgen.writeStringField( "status", authority.status)
         jgen.writeArrayFieldStart("labels")
         for (i in 0..authority.labels.size-1) {
            jgen.writeStartObject()

@@ -19,7 +19,7 @@ class TypeSerializerTest {
         var serializerProvider = ObjectMapper().serializerProvider
         TypeDisplaySerializer().serialize(testDisplay, jsonGenerator, serializerProvider)
         jsonGenerator.flush()
-        assertThat(jsonWriter.toString(), equalTo("{\"id\":\"000\",\"labels\":[{\"lang\":\"en\",\"name\":\"Test Codes (test-codes)\"}]}"))
+        assertThat(jsonWriter.toString(), equalTo("{\"id\":\"000\",\"status\":\"Valid\",\"labels\":[{\"lang\":\"cy\",\"name\":\"Codau Prawf\"},{\"lang\":\"en\",\"name\":\"Test Codes\"}]}"))
     }
 
 }
