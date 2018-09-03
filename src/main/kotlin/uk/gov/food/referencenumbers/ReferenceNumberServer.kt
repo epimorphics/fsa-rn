@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.mitchellbosecke.pebble.PebbleEngine
 import com.mitchellbosecke.pebble.loader.ClasspathLoader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
+import org.springframework.web.bind.annotation.ResponseStatus
 import java.io.StringWriter
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -19,12 +20,14 @@ import java.time.ZonedDateTime
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 class FSARN(@JsonProperty("fsa-rn") val rn: String)
 
+class InvalidParameterException(message : String) : Exception(message)
+
 @RestController
 class GreetingController(val config: ReferenceNumbersConfig) {
     @GetMapping("/generate/{authority}/{type}")
-    fun get(@PathVariable authority: Int, @PathVariable type: String) : (ResponseEntity<FSARN>) {
+    fun get(@PathVariable authority: Int, @PathVariable type: String) : (ResponseEntity<Any?>) {
         if (type.length != 3) {
-            throw RNException("Type parameter invalid length, example: 005")
+            throw InvalidParameterException("Type parameter invalid length, example: 105")
         }
         var x = RNFactory.getFactory(Authority(authority), Instance(config.instance), Type(type))
         var rn = FSARN(x.generateReferenceNumber().toString())
@@ -83,16 +86,8 @@ class DecodeController(val config: ReferenceNumbersConfig) {
         var x = RN(rn)
         var typeDisplay: TypeDisplay?
         var authorityDisplay: AuthorityDisplay?
-        try {
-            typeDisplay = TypeDisplay(x.getType())
-        } catch (e : RNException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
-        }
-        try {
-            authorityDisplay = AuthorityDisplay(x.getAuthority())
-        } catch (e : RNException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
-        }
+        typeDisplay = TypeDisplay(x.getType())
+        authorityDisplay = AuthorityDisplay(x.getAuthority())
         var drn = DecodedRN(x, x.getInstance(), x.getInstant(), typeDisplay, authorityDisplay, x.getVersion())
         return ResponseEntity.status(HttpStatus.OK).body(drn)
     }

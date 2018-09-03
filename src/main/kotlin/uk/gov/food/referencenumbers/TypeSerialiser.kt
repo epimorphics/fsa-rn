@@ -20,7 +20,7 @@ class TypeDisplay(t : Type) : Type(t.id) {
         try {
             this.labels = RegistryCache.getTypeLabels(id)
             this.status = "Valid"
-        } catch (e : JSONException) {
+        } catch (e : Exception) {
             this.labels = ArrayList<Label>()
             this.status = "Invalid Type"
         }

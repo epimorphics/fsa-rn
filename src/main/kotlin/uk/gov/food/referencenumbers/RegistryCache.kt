@@ -21,6 +21,8 @@ data class Label(var name: String, var lang: String)
 data class CachedType(var validUntil: Instant, var labels: List<Label>)
 data class CachedAuthority(var validUntil: Instant, var labels: List<Label>)
 
+class TypeNotPresentInRegistryException(message: String) : Exception(message)
+
 val CACHE_UNIT : TemporalUnit = ChronoUnit.DAYS
 val CACHE_DURATION : Long = 30L
 val CACHE_SIZE: Int = 30
@@ -46,7 +48,7 @@ object RegistryCache {
         return fun (key : Int?) : List<Label>? {
             var response : Response = get(url = "https://data.food.gov.uk/codes/reference-number/${type}/${String.format("%0${keylength}d", key)}?_format=jsonld", headers = mapOf("Accept" to "application/ld+json"))
             if (response.statusCode != 200) {
-                throw RNException("Invalid ${type}, ${type} with id=${key} could not be found in the registry")
+                throw TypeNotPresentInRegistryException("Invalid ${type}, ${type} with id=${key} could not be found in the registry")
             }
             var prefLabel = getJSON(response.jsonObject, "skos:prefLabel")
             var labels = ArrayList<Label>()

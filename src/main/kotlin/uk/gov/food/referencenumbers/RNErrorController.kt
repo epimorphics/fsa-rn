@@ -1,22 +1,26 @@
 package uk.gov.food.referencenumbers
 
 import com.mitchellbosecke.pebble.PebbleEngine
+import com.mitchellbosecke.pebble.extension.Test
 import com.mitchellbosecke.pebble.loader.ClasspathLoader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.error.ErrorController
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import uk.gov.food.rn.RNException
+import uk.gov.food.rn.Type
 import java.io.StringWriter
 import javax.servlet.RequestDispatcher
 import javax.servlet.http.HttpServletRequest
 
 @Controller
-class RNErrorController : ErrorController {
-
-    @RequestMapping("/error")
-    @ResponseBody
-    fun error(request : HttpServletRequest) : String {
+open class RNErrorController : ResponseEntityExceptionHandler() {
+    fun genericResponse(exception: Exception, statusCode: HttpStatus) : ResponseEntity<Any> {
         var loader = ClasspathLoader()
         loader.prefix = "templates"
         loader.suffix = ".peb"
@@ -24,18 +28,29 @@ class RNErrorController : ErrorController {
                 .loader(loader)
                 .build()
         var compiledTemplate : PebbleTemplate = engine.getTemplate("err")
-        var statusCode = request.getAttribute("javax.servlet.error.status_code") as Integer
-        var exception  = request.getAttribute("javax.servlet.error.exception") as? Exception
         var context = HashMap<String, Any>()
-        var exceptionMessage : String = if (exception === null) "N/A" else exception.localizedMessage
-        context.put("status", statusCode)
-        context.put("exception", exceptionMessage)
+        context.put("status", statusCode.value())
+        context.put("exception", "${exception.message}")
         var writer = StringWriter()
         compiledTemplate.evaluate(writer, context)
-        return writer.toString()
+        return ResponseEntity.status(statusCode).header("Content-Type", "text/html").body(writer.toString())
     }
+}
 
-    override fun getErrorPath(): String {
-        return "/error"
-    }
+@ControllerAdvice
+class ExceptionHandler: RNErrorController() {
+    @ExceptionHandler(Exception::class)
+    fun handleException(exception: Exception): ResponseEntity<Any> = genericResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR)
+}
+
+@ControllerAdvice
+class RNExceptionHandler: RNErrorController() {
+    @ExceptionHandler(RNException::class)
+    fun handleException(exception: RNException): ResponseEntity<Any> = genericResponse(exception, HttpStatus.BAD_REQUEST)
+}
+
+@ControllerAdvice
+class InvalidParameterExceptionHandler: RNErrorController() {
+    @ExceptionHandler(InvalidParameterException::class)
+    fun handleException(exception: InvalidParameterException): ResponseEntity<Any> = genericResponse(exception, HttpStatus.BAD_REQUEST)
 }
