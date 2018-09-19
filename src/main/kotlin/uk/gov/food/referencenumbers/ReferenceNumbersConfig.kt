@@ -11,4 +11,22 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class ReferenceNumbersConfig {
     var instance: Int = 1
+
+    @Bean
+    fun pebbleEngine(): PebbleEngine {
+        var loader = ClasspathLoader()
+        loader.prefix = "templates"
+        loader.suffix = ".peb"
+        return PebbleEngine.Builder()
+            .loader(loader).build()
+    }
+
+    @Bean
+    fun viewResolver(): PebbleViewResolver {
+        val viewResolver = PebbleViewResolver()
+        viewResolver.setPrefix("templates/")
+        viewResolver.setSuffix(".peb")
+        viewResolver.setPebbleEngine(pebbleEngine())
+        return viewResolver
+    }
 }
