@@ -76,6 +76,41 @@ fun RNModelMap(rn : String) : ModelMap {
     return jsonModel
 }
 
+fun JSONLDModelMap(rn : String) : ModelMap {
+    var jsonModel = RNModelMap(rn)
+    var jsonldModel = ModelMap()
+    jsonldModel.addAttribute("@type", "rn:RN")
+    jsonldModel.addAttribute("@id", "https://data.food.gov.uk/reference-number/decode/${jsonModel.get("referenceNumber")}")
+    jsonldModel.addAttribute("rn:timestamp", jsonModel.get("timeStamp"))
+    jsonldModel.addAttribute("rn:instance", jsonModel.get("instance"))
+    var jsonldTypeModel = ModelMap()
+    var jsonTypeModel = jsonModel.get("type") as ModelMap
+    jsonldTypeModel.addAttribute("@id", "https://data.food.gov.uk/codes/reference-number/type/${jsonTypeModel.get("id")}")
+    jsonldTypeModel.addAttribute("skos:notation", jsonTypeModel.get("id"))
+    jsonldTypeModel.addAttribute("rdfs:label", "food-rrn")
+    jsonldTypeModel.addAttribute("rn:status", jsonTypeModel.get("status"))
+    val ldlabeltransform = fun (label: Label): ModelMap {
+        var m = ModelMap()
+        m.addAttribute("@language", label.lang)
+        m.addAttribute("@value", label.name)
+        return m
+    }
+    val types = jsonTypeModel.get("labels") as List<Label>
+    jsonldTypeModel.addAttribute("skos:prefLabel", types.map(ldlabeltransform))
+    var jsonldAuthorityModel = ModelMap()
+    var jsonAuthorityModel = jsonModel.get("authority") as ModelMap
+    jsonldAuthorityModel.addAttribute("@id", "https://data.food.gov.uk/codes/reference-number/authority/${jsonAuthorityModel.get("id")}")
+    jsonldAuthorityModel.addAttribute("@type", "skos:Concept")
+    jsonldAuthorityModel.addAttribute("skos:notation", jsonAuthorityModel.get("id"))
+    jsonldAuthorityModel.addAttribute("rn:status", jsonAuthorityModel.get("status"))
+    val authorities = jsonAuthorityModel.get("labels") as List<Label>
+    jsonldAuthorityModel.addAttribute("skos:prefLabel", authorities.map(ldlabeltransform))
+    jsonldModel.addAttribute("rn:type", jsonldTypeModel)
+    jsonldModel.addAttribute("rn:authority", jsonldAuthorityModel)
+    jsonldModel.addAttribute("rn:version", jsonModel.get("version"))
+    return jsonldModel
+}
+
 @RestController
 class DecodeController(val config: ReferenceNumbersConfig) {
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.html"), produces=arrayOf("text/html"))
@@ -98,9 +133,12 @@ class DecodeController(val config: ReferenceNumbersConfig) {
     }
 
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.jsonld"), produces=arrayOf("application/ld+json"))
-    fun getJSONLD(@PathVariable rn: String) : (ResponseEntity<LDRN>) {
-        var x = RN(rn)
-        var drn = LDRN(x, x.getInstance(), x.getInstant(), TypeDisplay(x.getType()), AuthorityDisplay(x.getAuthority()), x.getVersion())
-        return ResponseEntity.ok(drn)
+    fun getJSONLD(@PathVariable rn: String) : ModelAndView {
+        var mav = ModelAndView()
+        var mm = JSONLDModelMap(rn)
+        var view = MappingJackson2JsonView()
+        mav.setView(view)
+        mav.addAllObjects(mm)
+        return mav
     }
 }
