@@ -1,22 +1,16 @@
 package uk.gov.food.referencenumbers
 
 import com.mitchellbosecke.pebble.PebbleEngine
-import com.mitchellbosecke.pebble.extension.Test
 import com.mitchellbosecke.pebble.loader.ClasspathLoader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import uk.gov.food.rn.RNException
-import uk.gov.food.rn.Type
 import java.io.StringWriter
-import javax.servlet.RequestDispatcher
-import javax.servlet.http.HttpServletRequest
 
 @Controller
 open class RNErrorController : ResponseEntityExceptionHandler() {

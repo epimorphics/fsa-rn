@@ -1,8 +1,6 @@
 package uk.gov.food.referencenumbers
 
 
-import uk.gov.food.rn.*
-import java.time.ZonedDateTime
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 

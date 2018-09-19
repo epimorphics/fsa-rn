@@ -2,16 +2,12 @@ package uk.gov.food.referencenumbers
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import com.google.common.collect.MinMaxPriorityQueue.maximumSize
 import khttp.get
 import khttp.responses.Response
-import org.apache.commons.collections.map.LRUMap
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import sun.misc.Cache
 import uk.gov.food.rn.RNException
-import uk.gov.food.rn.Type
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
