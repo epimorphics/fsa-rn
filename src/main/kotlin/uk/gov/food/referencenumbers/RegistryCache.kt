@@ -64,12 +64,12 @@ object RegistryCache {
     }
 
     var authorities = CacheBuilder.newBuilder()
-            .maximumSize(30)
+            .maximumSize(1000)
             .expireAfterWrite(1, TimeUnit.DAYS)
             .build(CacheLoader.from(registryValueHandler("authority", 4)))
 
     var types = CacheBuilder.newBuilder()
-            .maximumSize(30)
+            .maximumSize(1000)
             .expireAfterWrite(1, TimeUnit.DAYS)
             .build(CacheLoader.from(registryValueHandler("type", 3)))
 
