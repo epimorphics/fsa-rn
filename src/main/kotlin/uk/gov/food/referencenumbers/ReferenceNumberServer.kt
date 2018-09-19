@@ -37,57 +37,64 @@ class GreetingController(val config: ReferenceNumbersConfig) {
     }
 }
 
-@JsonSerialize(using = DecodedRNSerializer::class)
-data class DecodedRN(val referenceNumber: RN, val instance: Instance, val timestamp: TimeStamp, val type: TypeDisplay, val authority: AuthorityDisplay, val version: Version)
+fun RNModelMap(rn : String) : ModelMap {
+    var jsonModel = ModelMap()
+    var RNModel = RN(rn)
+    var typeValid: String
+    var authorityValid: String
+    var types: List<Label>
+    var authorities: List<Label>
+    try {
+        types = RegistryCache.getTypeLabels(RNModel.type.id)
+        typeValid = "Valid"
+    } catch (e: Exception) {
+        typeValid = "Invalid Type"
+        types = emptyList()
+    }
+    try {
+        authorities = RegistryCache.getAuthorityLabels(RNModel.authority.id)
+        authorityValid = "Valid"
+    } catch (e: Exception) {
+        authorityValid = "Invalid Authority"
+        authorities = emptyList()
+    }
 
-@JsonSerialize(using = LDRNSerializer::class)
-data class LDRN(val referenceNumber: RN, val instance: Instance, val timestamp: TimeStamp, val type: TypeDisplay, val authority: AuthorityDisplay, val version: Version)
+    jsonModel.addAttribute("referenceNumber", RNModel.toString())
+    jsonModel.addAttribute("timeStamp", RNModel.instant.instant.toOffsetDateTime().toString())
+    jsonModel.addAttribute("instance", String.format("%03d", RNModel.instance.id))
+    var jsonTypeModel = ModelMap()
+    jsonTypeModel.addAttribute("id", String.format("%03d", RNModel.type.id))
+    jsonTypeModel.addAttribute("status", typeValid)
+    jsonTypeModel.addAttribute("labels", types)
+    jsonModel.addAttribute("type", jsonTypeModel)
+    var jsonAuthorityModel = ModelMap()
+    jsonAuthorityModel.addAttribute("id", RNModel.authority.id.toString())
+    jsonAuthorityModel.addAttribute("status", authorityValid)
+    jsonAuthorityModel.addAttribute("labels", authorities)
+    jsonModel.addAttribute("authority", jsonAuthorityModel)
+    jsonModel.addAttribute("version", RNModel.version.id)
+    return jsonModel
+}
 
 @RestController
 class DecodeController(val config: ReferenceNumbersConfig) {
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.html"), produces=arrayOf("text/html"))
-    fun getHTML(@PathVariable rn: String) : (ResponseEntity<Any?>) {
-        var x = RN(rn)
-        var typeDisplay: TypeDisplay?
-        var authorityDisplay: AuthorityDisplay?
-
-        typeDisplay = TypeDisplay(x.getType())
-        authorityDisplay = AuthorityDisplay(x.getAuthority())
-        var drn = DecodedRN(x, x.getInstance(), x.getInstant(), typeDisplay, authorityDisplay, x.getVersion())
-        var loader = ClasspathLoader()
-        loader.prefix = "templates"
-        loader.suffix = ".peb"
-        var engine : PebbleEngine = PebbleEngine.Builder()
-                .loader(loader)
-                .build()
-        var compiledTemplate : PebbleTemplate = engine.getTemplate("base")
-        var context = HashMap<String, Any>()
-        context.put("title", "FSA-RN")
-        context.put("timestamp", drn.timestamp.instant)
-        context.put("referenceNumber", drn.referenceNumber.encodedForm)
-        context.put("timestamp", drn.timestamp.instant)
-        context.put("instance", String.format("%03d", drn.instance.id))
-        context.put("version", drn.version.id)
-        context.put("typeLabels", drn.type.labels)
-        context.put("typeID", String.format("%03d", drn.type.id))
-        context.put("typeStatus", drn.type.status)
-        context.put("authorityLabels", drn.authority.labels)
-        context.put("authorityID", String.format("%04d", drn.authority.id))
-        context.put("authorityStatus", drn.authority.status)
-        var writer = StringWriter()
-        compiledTemplate.evaluate(writer, context)
-        return ResponseEntity.status(HttpStatus.OK).body(writer.toString())
+    fun getHTML(@PathVariable rn: String) : ModelAndView {
+        var mav = ModelAndView()
+        var mm = RNModelMap(rn)
+        mav.viewName= "rn"
+        mav.addAllObjects(mm)
+        return mav
     }
 
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.json"), produces=arrayOf("application/json"))
-    fun getJSON(@PathVariable rn: String) : (ResponseEntity<Any?>) {
-        var x = RN(rn)
-        var typeDisplay: TypeDisplay?
-        var authorityDisplay: AuthorityDisplay?
-        typeDisplay = TypeDisplay(x.getType())
-        authorityDisplay = AuthorityDisplay(x.getAuthority())
-        var drn = DecodedRN(x, x.getInstance(), x.getInstant(), typeDisplay, authorityDisplay, x.getVersion())
-        return ResponseEntity.status(HttpStatus.OK).body(drn)
+    fun getJSON(@PathVariable rn: String) : ModelAndView {
+        var mav = ModelAndView()
+        var mm = RNModelMap(rn)
+        var view = MappingJackson2JsonView()
+        mav.setView(view)
+        mav.addAllObjects(mm)
+        return mav
     }
 
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.jsonld"), produces=arrayOf("application/ld+json"))
