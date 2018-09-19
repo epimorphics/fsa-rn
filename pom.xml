@@ -5,7 +5,7 @@
 
 	<groupId>uk.gov.food</groupId>
 	<artifactId>fsa-reference-numbers</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 	<packaging>jar</packaging>
 
 	<name>reference-numbers</name>

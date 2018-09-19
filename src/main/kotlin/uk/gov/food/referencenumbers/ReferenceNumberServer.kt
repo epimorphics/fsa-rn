@@ -1,21 +1,17 @@
 package uk.gov.food.referencenumbers
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import io.micrometer.core.instrument.Metrics
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.HttpHeaders
+import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.servlet.ModelAndView
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView
 import uk.gov.food.rn.*
-import com.fasterxml.jackson.annotation.*
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer
-import com.mitchellbosecke.pebble.PebbleEngine
-import com.mitchellbosecke.pebble.loader.ClasspathLoader
-import com.mitchellbosecke.pebble.template.PebbleTemplate
-import org.springframework.web.bind.annotation.ResponseStatus
-import java.io.StringWriter
-import java.time.Instant
-import java.time.ZonedDateTime
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 class FSARN(@JsonProperty("fsa-rn") val rn: String)
@@ -29,6 +25,8 @@ class GreetingController(val config: ReferenceNumbersConfig) {
         if (type.length != 3) {
             throw InvalidParameterException("Type parameter invalid length, example: 105")
         }
+        Metrics.globalRegistry.counter("fsa-rn.authority", "authority", authority.toString()).increment()
+        Metrics.globalRegistry.counter("fsa-rn.type", "type", type).increment()
         var x = RNFactory.getFactory(Authority(authority), Instance(config.instance), Type(type))
         var rn = FSARN(x.generateReferenceNumber().toString())
         var responseHeaders = HttpHeaders()
