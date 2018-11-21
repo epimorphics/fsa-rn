@@ -3,6 +3,7 @@ package uk.gov.food.referencenumbers
 import com.mitchellbosecke.pebble.PebbleEngine
 import com.mitchellbosecke.pebble.loader.ClasspathLoader
 import com.mitchellbosecke.pebble.template.PebbleTemplate
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -14,7 +15,10 @@ import java.io.StringWriter
 
 @Controller
 open class RNErrorController : ResponseEntityExceptionHandler() {
+    val log : org.slf4j.Logger = LoggerFactory.getLogger(RNErrorController::class.java)
+
     fun genericResponse(exception: Exception, statusCode: HttpStatus) : ResponseEntity<Any> {
+        log.error("error caught: " + exception.message, exception)
         var loader = ClasspathLoader()
         loader.prefix = "templates"
         loader.suffix = ".peb"
