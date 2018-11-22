@@ -102,6 +102,7 @@
 			<groupId>io.sentry</groupId>
 			<artifactId>sentry-logback</artifactId>
 			<version>1.7.14</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>

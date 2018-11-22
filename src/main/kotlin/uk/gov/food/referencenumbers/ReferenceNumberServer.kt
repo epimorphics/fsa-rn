@@ -2,6 +2,8 @@ package uk.gov.food.referencenumbers
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.micrometer.core.instrument.Metrics
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,16 +21,42 @@ class FSARN(@JsonProperty("fsa-rn") val rn: String)
 class InvalidParameterException(message : String) : Exception(message)
 
 @RestController
-class GreetingController(val config: ReferenceNumbersConfig) {
+class GenerateController(val config: ReferenceNumbersConfig) {
+
+    @Autowired
+    lateinit var badWordConfig : BadWords
+
+    val log : org.slf4j.Logger = LoggerFactory.getLogger(GenerateController::class.java)
+
+    fun ContainsBadWord(word : String) : Boolean {
+        var rnstring = word.replace("-", "")
+        return badWordConfig.badwords.any { rnstring.contains(it, ignoreCase = true) }
+    }
+
+    fun GetReferenceNumber(authority: Authority, type: Type) : FSARN {
+        Metrics.globalRegistry.counter("fsa-rn.authority", "authority", authority.id.toString()).increment()
+        Metrics.globalRegistry.counter("fsa-rn.type", "type", type.id.toString()).increment()
+        var x = RNFactory.getFactory(authority, Instance(config.instance), type)
+        var generated : RN? = null
+        var containsBadWord : Boolean = true
+        var ttl : Int = 5
+        while (containsBadWord) {
+            if (ttl <= 0) {
+                throw RNException("Could not generate reference number, all attempts at generation contained bad words")
+            }
+            ttl -= 1
+            generated = x.generateReferenceNumber()
+            containsBadWord = ContainsBadWord(generated.toString())
+        }
+        return FSARN(generated.toString())
+    }
+
     @GetMapping("/generate/{authority}/{type}")
     fun get(@PathVariable authority: Int, @PathVariable type: String) : (ResponseEntity<Any?>) {
         if (type.length != 3) {
             throw InvalidParameterException("Type parameter invalid length, example: 105")
         }
-        Metrics.globalRegistry.counter("fsa-rn.authority", "authority", authority.toString()).increment()
-        Metrics.globalRegistry.counter("fsa-rn.type", "type", type).increment()
-        var x = RNFactory.getFactory(Authority(authority), Instance(config.instance), Type(type))
-        var rn = FSARN(x.generateReferenceNumber().toString())
+        var rn = GetReferenceNumber(Authority(authority), Type(type))
         var responseHeaders = HttpHeaders()
         responseHeaders.set("Cache-Control", "no-cache,no-store,must-revalidate")
         responseHeaders.set("pragma", "no-cache")
