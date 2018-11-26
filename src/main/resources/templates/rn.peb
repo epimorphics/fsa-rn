@@ -43,25 +43,25 @@
   </header>
   <div class="container wrapper">
     <div class="inner-container">
-      <h4>View as <a href="/decode/{{ referenceNumber }}.>JSON</a> <a href="/decode/{{ referenceNumber }}.d">JSON-LD</a></h4>
+      <h4>View as <a href="/decode/{{ rn.rnString }}.json">JSON</a> <a href="/decode/{{ rn.rnString }}.jsonld">JSON-LD</a></h4>
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th scope="row">{{ referenceNumber }}</th>
+            <th scope="row">{{ rn.rnString}}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <th scope="row">Generated at</th>
-            <td scope="row">{{ timeStamp }}</th>
+            <td scope="row">{{ rn.timestamp }}</th>
           </tr>
           <tr>
             <th scope="row">Number version</th>
-            <td scope="row">{{ version }}</th>
+            <td scope="row">{{ rn.version }}</th>
           </tr>
           <tr>
             <th scope="row">Generator Instance</th>
-            <td scope="row">{{ instance }}</th>
+            <td scope="row">{{ rn.instance }}</th>
           </tr>
           <tr>
             <th scope="row">Type</th>
@@ -70,13 +70,13 @@
                 <tbody>
                   <tr>
                     <th scope="row">ID</th>
-                    <td scope="row">{{ type.id }}</td>
+                    <td scope="row">{{ rn.type.id }}</td>
                   </tr>
                   <tr>
                     <th scope="row">Status</th>
-                    <td scope="row">{{ type.status }}</td>
+                    <td scope="row">{{ rn.type.status }}</td>
                   </tr>
-                  {% for label in type.labels %}
+                  {% for label in rn.type.labels %}
                   <tr>
                     <th scope="row">Label:{{ label.lang }}</th>
                     <td scope="row">{{ label.name }}</th>
@@ -92,16 +92,16 @@
                 <tbody>
                   <tr>
                     <th scope="row">ID</th>
-                    <td scope="row">{{ authority.id }}</td>
+                    <td scope="row">{{ rn.authority.id }}</td>
                   </tr>
                   <tr>
                     <th scope="row">Status</th>
-                    <td scope="row">{{ authority.status}}</td>
+                    <td scope="row">{{ rn.authority.status}}</td>
                   </tr>
                   {% for label in authority.labels %}
                   <tr>
-                    <th scope="row">Label:{{ label.lang }}</th>
-                    <td scope="row">{{ label.name }}</th>
+                    <th scope="row">Label:{{ rn.label.lang }}</th>
+                    <td scope="row">{{ rn.label.name }}</th>
                   </tr>
                   {% endfor%}
                 </tbody>
