@@ -9,19 +9,12 @@ import org.json.JSONException
 import org.json.JSONObject
 import uk.gov.food.rn.RNException
 import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 import java.util.concurrent.TimeUnit
 
-data class Label(var name: String, var lang: String)
 data class CachedType(var validUntil: Instant, var labels: List<Label>)
 data class CachedAuthority(var validUntil: Instant, var labels: List<Label>)
 
 class TypeNotPresentInRegistryException(message: String) : Exception(message)
-
-val CACHE_UNIT : TemporalUnit = ChronoUnit.DAYS
-val CACHE_DURATION : Long = 30L
-val CACHE_SIZE: Int = 30
 
 object RegistryCache {
     fun getJSON(value : JSONObject, key : String) : Any {
@@ -37,7 +30,6 @@ object RegistryCache {
         } catch (e : JSONException){
             throw RNException("Could not parse registry data, either malformed or unavailable")
         }
-
     }
 
     fun registryValueHandler(type : String, keylength: Int) : (key: Int?) -> List<Label>? {
