@@ -48,11 +48,16 @@ class GenerateController(val config: ReferenceNumbersConfig) {
 
     @GetMapping("/generate/{authority}/{type}")
     fun get(@PathVariable authority: Int, @PathVariable type: String) : (ResponseEntity<Any?>) {
-        var rn = GetReferenceNumber(Authority(authority), type)
         var responseHeaders = HttpHeaders()
         responseHeaders.set("Cache-Control", "no-cache,no-store,must-revalidate")
         responseHeaders.set("pragma", "no-cache")
         responseHeaders.set("Expires", "0")
-        return ResponseEntity(rn, responseHeaders, HttpStatus.OK)
+        try { 
+          var rn = GetReferenceNumber(Authority(authority), type)
+          return ResponseEntity(rn, responseHeaders, HttpStatus.OK)
+        } catch (e : Exception) {
+            log.info(e.message)
+            return ResponseEntity(e.message , responseHeaders, HttpStatus.BAD_REQUEST) 
+        }
     }
 }
