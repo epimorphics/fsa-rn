@@ -46,3 +46,11 @@ java -jar target/fsa-reference-numbers-0.0.2-SNAPSHOT.jar --fsa-rn.instance=(Ins
 #docker
 docker run -it -p 8080:8080 {{ docker image }} --fsa-rn.instance=(Instance number)
 ```
+
+## Instance number allocation
+
+| Usage | Instance number range |
+|---|---|
+| Epimorphics RN service | 0-9, currently 0, 1 in use |
+| Epimorphics UV service | 10-19, currently 10 in use |
+| FSA usage | 900 - 999 |
