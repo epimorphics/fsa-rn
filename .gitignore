@@ -1,3 +1,5 @@
+/src/main/resources/badwords.json
+
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
