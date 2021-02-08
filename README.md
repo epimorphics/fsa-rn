@@ -16,15 +16,19 @@ cd java-rn
 mvn clean install
 ```
 
-Now return to this directory
+To build and test you need a file `src/main/resources/badwords.json` which is not checked in to the git repo.
+
+Obtain the latest version of this from [gdrive](https://drive.google.com/drive/u/1/folders/1Olex5Io_B5y2OHye9DcgyfDI2GKZOwz8). The file is gitignored to is safe.
 
 ```sh
 # build jar
-./mvnw package
+mvn package
 
 # build docker image
-./mvnw install dockerfile:build
+mvn install dockerfile:build
 ```
+
+In some dev environments (windows) you may need to use the provided `mvnw` script instead of `mvn`.
 
 ## Running
 
