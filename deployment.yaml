@@ -1,0 +1,7 @@
+version: 2
+name:  epimorphics/fsa-codes-registry
+deployments:
+  - branch: "master"
+    publish: "dev"
+  - branch: "stable"
+    publish: "stable"
