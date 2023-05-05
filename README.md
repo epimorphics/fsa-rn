@@ -1,20 +1,15 @@
 # fsa-rn
 
-Simple Spring server for providing FSA Reference Numbers
+Simple Spring server for providing FSA Reference Numbers. REST API is:
 
-/generate/{authority}/{type}
-/decode/{code}
+| Verb  | Path                           | Action        | Notes                                               |
+|-------|--------------------------------|---------------|-----------------------------------------------------|
+| `GET` | `/generate/{authority}/{type}` | Generate a RN | use type `000` for testing, FSA is authority `1000` |
+| `GET` | `/decode/{code}`               | Decode a RN   |                                                     |
+
+For details on the Reference Number design and source for the generator see: https://github.com/FoodStandardsAgency/fsa-rn
 
 ## Building
-
-Currently the reference numbers jar is not available, first install that into your local maven repository
-
-```sh
-git clone git@github.com:FoodStandardsAgency/fsa-rn.git
-cd fsa-rn
-cd java-rn
-mvn clean install
-```
 
 To build and test you need a file `src/main/resources/badwords.json` which is not checked in to the git repo.
 

@@ -22,7 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<kotlin.version>1.2.20</kotlin.version>
+		<kotlin.version>1.6.21</kotlin.version>
         <docker.image.prefix>173681544495.dkr.ecr.eu-west-1.amazonaws.com/epimorphics</docker.image.prefix>
         <jackson-annotations-version>2.9.5</jackson-annotations-version>
 	</properties>
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>uk.gov.food</groupId>
             <artifactId>rn</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
