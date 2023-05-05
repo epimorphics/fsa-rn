@@ -1,0 +1,14 @@
+name: "Build & Publish Docker Image"
+on:
+  workflow_dispatch: {}
+  push: {}
+
+jobs:
+  publish:
+    uses:  "epimorphics/github-workflows/.github/workflows/publish.yml@reusable"
+    secrets:
+      # Repository specific
+      aws_access_key_id:     "${{ secrets.BUILD_FSA_AWS_ACCESS_KEY_ID }}"
+      aws_secret_access_key: "${{ secrets.BUILD_FSA_AWS_SECRET_ACCESS_KEY }}"
+      # Fixed
+      epi_gpr_access_token:  "${{ secrets.EPI_GPR_READ_ACCESS_TOKEN }}"
