@@ -116,6 +116,39 @@
 			<id>central</id>
 			<url>https://jcenter.bintray.com</url>
 		</repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>epi-public-repo</id>
+            <name>Epimorphics Public Repository</name>
+            <url>https://repository.epimorphics.com</url>
+        </repository>
+        <repository>
+            <id>epi-public-s3-snapshot</id>
+            <name>Epimorphics S3 snapshot repository</name>
+            <url>https://s3-eu-west-1.amazonaws.com/epi-repository/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>epi-public-s3-release</id>
+            <name>Epimorphics S3 release repository</name>
+            <url>https://s3-eu-west-1.amazonaws.com/epi-repository/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>		
 	</repositories>
 
 	<build>
