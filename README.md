@@ -13,13 +13,19 @@ For details on the Reference Number design and source for the generator see: htt
 
 To build and test you need a file `src/main/resources/badwords.json` which is not checked in to the git repo.
 
-Obtain the latest version of this from [gdrive](https://drive.google.com/drive/u/1/folders/1Olex5Io_B5y2OHye9DcgyfDI2GKZOwz8). The file is gitignored to is safe.
+Obtain the latest version of this from [gdrive](https://drive.google.com/drive/u/1/folders/1Olex5Io_B5y2OHye9DcgyfDI2GKZOwz8). The file is gitignored, so this is safe.
 
 ```sh
 make image
 ```
 
 Reusable workflow and CI/CD are not currently supported due to the management of the badwords.json list.
+
+Publish with:
+
+```sh
+AWS_PROFILE=fsa GITHUB_RUN_NUMBER=nn make publish
+```
 
 ## Running
 
