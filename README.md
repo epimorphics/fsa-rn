@@ -16,20 +16,16 @@ To build and test you need a file `src/main/resources/badwords.json` which is no
 Obtain the latest version of this from [gdrive](https://drive.google.com/drive/u/1/folders/1Olex5Io_B5y2OHye9DcgyfDI2GKZOwz8). The file is gitignored to is safe.
 
 ```sh
-# build jar
-mvn package
-
-# build docker image
-mvn install dockerfile:build
+make image
 ```
 
-In some dev environments (windows) you may need to use the provided `mvnw` script instead of `mvn`.
+Reusable workflow and CI/CD are not currently supported due to the management of the badwords.json list.
 
 ## Running
 
 ```sh
 # run jar
-java -jar fsa-reference-numbers-0.0.2-SNAPSHOT.jar
+java -jar fsa-reference-numbers-0.0.7.jar
 
 # run dockerfile
 docker run -it -p 8080:8080 {{ Name of outputted docker image }}
@@ -46,7 +42,7 @@ java -jar target/fsa-reference-numbers-0.0.2-SNAPSHOT.jar --fsa-rn.instance=(Ins
 docker run -it -p 8080:8080 {{ docker image }} --fsa-rn.instance=(Instance number)
 ```
 
-## Instance number allocation
+### Instance number allocation
 
 | Usage | Instance number range |
 |---|---|

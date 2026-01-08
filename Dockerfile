@@ -1,7 +1,10 @@
-FROM amazoncorretto:8-alpine3.14
+FROM amazoncorretto:21-al2023-headless
 VOLUME /tmp
 ARG JAR_FILE
-ADD ${JAR_FILE} app.jar
-RUN addgroup -S app && adduser -S -G app app 
+ADD ${JAR_FILE} /app.jar
+COPY ./bin/run_app.sh /run_app.sh
+RUN yum install shadow-utils -y
+RUN groupadd -r app && adduser -r -g app app
 USER app
-ENTRYPOINT ["java","-jar","/app.jar"]
+EXPOSE 8080
+CMD ["sh","-c","/run_app.sh"]
