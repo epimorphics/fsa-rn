@@ -7,5 +7,6 @@ exec java --add-opens=java.base/java.lang=ALL-UNNAMED \
           --add-opens=java.base/sun.net.www.protocol.http=ALL-UNNAMED \
           --add-opens=java.base/sun.net.www.protocol.https=ALL-UNNAMED  \
           --add-opens=java.base/sun.net.www=ALL-UNNAMED \
+          -Xmx128m \
      -jar /app.jar "$@"
     
