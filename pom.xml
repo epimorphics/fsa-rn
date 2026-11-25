@@ -56,17 +56,11 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson-annotations-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>khttp</groupId>
-			<artifactId>khttp</artifactId>
-			<version>1.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>json</artifactId>
-                    <groupId>org.json</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>org.danilopianini</groupId>
+      <artifactId>khttp</artifactId>
+      <version>1.6.3</version>
+    </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
