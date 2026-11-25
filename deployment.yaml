@@ -1,5 +1,5 @@
 version: 2
-name:  epimorphics/fsa-codes-registry
+name:  epimorphics/fsa-reference-numbers
 deployments:
   - branch: "master"
     publish: "dev"

@@ -2,6 +2,7 @@ package uk.gov.food.referencenumbers
 
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,16 +26,14 @@ class DecodeController(val config: ReferenceNumbersConfig) {
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.json"), produces=arrayOf("application/json"))
     fun getJSON(@PathVariable rn: String) : String {
         var rnModel : RNModel = RNModel(rn)
-        var mapper = ObjectMapper()
-        mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
+        var mapper = JsonMapper.builder().configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false).build()
         return mapper.writerWithView(JsonRN::class.java).writeValueAsString(rnModel)
     }
 
     @GetMapping(value = arrayOf("/decode/{rn}", "/decode/{rn}.jsonld"), produces=arrayOf("application/ld+json"))
     fun getJSONLD(@PathVariable rn: String) : String {
         var rn = RNModel(rn)
-        var mapper = ObjectMapper()
-        mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
+        var mapper = JsonMapper.builder().configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false).build()
         return mapper.writerWithView(JsonLDRN::class.java).writeValueAsString(rn)
     }
 }

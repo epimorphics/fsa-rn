@@ -20,6 +20,7 @@ class BadWords {
     lateinit var badwords: List<String>
 }
 
+@Suppress("UNCHECKED_CAST")
 class JsonPropertySourceFactory : PropertySourceFactory {
     @Throws(IOException::class)
     override fun createPropertySource(name: String?, resource: EncodedResource): org.springframework.core.env.PropertySource<*> {

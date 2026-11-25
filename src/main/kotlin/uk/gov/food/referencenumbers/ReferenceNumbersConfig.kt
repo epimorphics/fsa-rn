@@ -1,8 +1,8 @@
 package uk.gov.food.referencenumbers
 
-import com.mitchellbosecke.pebble.PebbleEngine
-import com.mitchellbosecke.pebble.loader.ClasspathLoader
-import com.mitchellbosecke.pebble.spring4.PebbleViewResolver
+import io.pebbletemplates.pebble.PebbleEngine
+import io.pebbletemplates.pebble.loader.ClasspathLoader
+import io.pebbletemplates.spring.servlet.PebbleViewResolver
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -23,10 +23,9 @@ class ReferenceNumbersConfig {
 
     @Bean
     fun viewResolver(): PebbleViewResolver {
-        val viewResolver = PebbleViewResolver()
+        val viewResolver = PebbleViewResolver(pebbleEngine())
         viewResolver.setPrefix("templates/")
         viewResolver.setSuffix(".peb")
-        viewResolver.setPebbleEngine(pebbleEngine())
         return viewResolver
     }
 }

@@ -6,6 +6,7 @@ STAGE?=dev
 ECR?=${ACCOUNT}.dkr.ecr.eu-west-1.amazonaws.com
 IMAGE?=${NAME}/${STAGE}
 REPO?=${ECR}/${IMAGE}
+GITHUB_RUN_NUMBER?=1
 
 BRANCH:=$(shell git rev-parse --abbrev-ref HEAD)
 COMMIT:=$(shell git rev-parse --short HEAD)
